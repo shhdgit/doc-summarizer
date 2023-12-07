@@ -6,6 +6,10 @@ import "dotenv/config";
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 async function main() {
+  if (process.env.SUMMARIZED_PATH) {
+    throw new Error(`Requires the correct environment variables.`);
+  }
+
   const srcList = getMdFileList(process.env.SUMMARIZED_PATH);
 
   await Promise.all(
