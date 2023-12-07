@@ -11,6 +11,7 @@ Create an environment variable file `.env` in current directory.
 
 .env:
 ```
+LANGLINK_APP_ID=
 LANGLINK_ACCESS_KEY=
 LANGLINK_ACCESS_SECRET=
 LANGLINK_USER=

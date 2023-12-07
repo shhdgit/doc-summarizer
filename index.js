@@ -6,7 +6,7 @@ import "dotenv/config";
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 async function main() {
-  if (process.env.SUMMARIZED_PATH) {
+  if (!process.env.SUMMARIZED_PATH) {
     throw new Error(`Requires the correct environment variables.`);
   }
 
@@ -90,8 +90,9 @@ const LANGLINK_HEADERS = {
   "x-langlink-user": process.env.LANGLINK_USER,
 };
 
-const GPT35_APP_ID = "ec30e9a0-382b-462c-891c-6e2f9146c87a";
-const OUTPUT_NODE_ID = "uXt40e3y1KhhHEKW-gmSN";
+const GPT35_APP_ID = process.env.LANGLINK_APP_ID;
+const OUTPUT_NODE_ID =
+  process.env.LANGLINK_OUTPUT_ID || "uXt40e3y1KhhHEKW-gmSN";
 const RERUN_TIME = 3;
 const RETRY_INTERVAL = 5000;
 const RETRY_TIME = 12;
