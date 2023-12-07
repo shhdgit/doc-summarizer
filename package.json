@@ -1,0 +1,24 @@
+{
+  "name": "doc-summarizer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shhdgit/doc-summarizer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shhdgit/doc-summarizer/issues"
+  },
+  "homepage": "https://github.com/shhdgit/doc-summarizer#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "glob": "^10.3.10"
+  }
+}
