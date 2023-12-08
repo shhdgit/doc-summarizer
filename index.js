@@ -76,11 +76,12 @@ const splitMetaContent = (originalText) => {
 const summaryReg = /summary:\s(.*)/m;
 
 const replceSummary = (meta, summary) => {
+  const s = summary.replaceAll(":", "");
   const matches = summaryReg.exec(meta);
   if (!matches) {
-    return `${meta}summary: ${summary}\n`;
+    return `${meta}summary: ${s}\n`;
   }
-  return meta.replace(summaryReg, `summary: ${summary}`);
+  return meta.replace(summaryReg, `summary: ${s}`);
 };
 
 const LANGLINK_HEADERS = {
