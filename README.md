@@ -19,6 +19,7 @@ LANGLINK_USER=
 SUMMARIZED_PATH=../docs/benchmark/**/*
 # OVERRIDE is used to overwrite a non-empty summary
 # OVERRIDE=true
+# SUMMARY_WORD_COUNT=140
 ```
 
 Summarize
