@@ -11,12 +11,16 @@ async function main() {
   }
 
   const srcList = getMdFileList(process.env.SUMMARIZED_PATH);
+  const summaryWithColonPaths = [];
 
   await Promise.all(
     srcList.map((filePath) => {
-      return overrideSummary(filePath);
+      return overrideSummary(filePath, summaryWithColonPaths);
     })
   );
+
+  console.log("Summary with colon paths:");
+  summaryWithColonPaths.forEach((p) => console.log(p));
 }
 
 const getMdFileList = (prefix) => {
@@ -34,7 +38,7 @@ const writeFileSync = (destPath, fileContent) => {
   fs.writeFileSync(destPath, fileContent);
 };
 
-const overrideSummary = async (filePath) => {
+const overrideSummary = async (filePath, summaryWithColonPaths) => {
   console.log("====== start ======");
   console.log(filePath);
 
@@ -57,6 +61,10 @@ const overrideSummary = async (filePath) => {
   const result = replceSummary(meta, data);
   const contentWithMeta = `---\n${result}---\n${content}`;
 
+  if (data.includes(":")) {
+    summaryWithColonPaths.push(filePath);
+  }
+
   console.log(filePath);
   console.log("====== end ======");
 
@@ -76,12 +84,11 @@ const splitMetaContent = (originalText) => {
 const summaryReg = /summary:\s(.*)/m;
 
 const replceSummary = (meta, summary) => {
-  const s = summary.replaceAll(":", "");
   const matches = summaryReg.exec(meta);
   if (!matches) {
-    return `${meta}summary: ${s}\n`;
+    return `${meta}summary: ${summary}\n`;
   }
-  return meta.replace(summaryReg, `summary: ${s}`);
+  return meta.replace(summaryReg, `summary: ${summary}`);
 };
 
 const LANGLINK_HEADERS = {
@@ -122,7 +129,12 @@ const runLangLinkApp = async (input) => {
     `https://langlink.pingcap.net/langlink-api/applications/${GPT35_APP_ID}/async`,
     {
       method: "POST",
-      body: JSON.stringify({ input }),
+      body: JSON.stringify({
+        input: {
+          content: input,
+          word_count: process.env.SUMMARY_WORD_COUNT || 140,
+        },
+      }),
       headers: LANGLINK_HEADERS,
     }
   );
