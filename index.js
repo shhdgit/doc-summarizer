@@ -5,6 +5,8 @@ import "dotenv/config";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+const errorFileList = [];
+
 async function main() {
   if (!process.env.SUMMARIZED_PATH) {
     throw new Error(`Requires the correct environment variables.`);
@@ -19,12 +21,28 @@ async function main() {
     })
   );
 
-  console.log("Summary with colon paths:");
-  summaryWithColonPaths.forEach((p) => console.log(p));
+  if (!!errorFileList.length) {
+    console.log("-----------------------");
+    console.log("Failed:");
+    errorFileList.forEach((f) => console.log(f));
+    console.log(`Retry by set FILE_FILTER=${errorFileList.join(",")}`);
+  }
+
+  if (!!summaryWithColonPaths.length) {
+    console.log("-----------------------");
+    console.log("Summary with colon paths:");
+    summaryWithColonPaths.forEach((p) => console.log(p));
+  }
 }
 
 const getMdFileList = (prefix) => {
-  return glob.sync(prefix + ".md");
+  const fileFilter = process.env.FILE_FILTER
+    ? process.env.FILE_FILTER.split(",")
+    : [];
+  const files = glob.sync(prefix + ".md");
+  return fileFilter.length
+    ? files.filter((f) => fileFilter.includes(f))
+    : files;
 };
 
 const writeFileSync = (destPath, fileContent) => {
@@ -56,8 +74,13 @@ const overrideSummary = async (filePath, summaryWithColonPaths) => {
     console.log("skip");
     return;
   }
-
-  const data = await executeLangLinkApp(content);
+  let data;
+  try {
+    data = await executeLangLinkApp(content);
+  } catch {
+    errorFileList.push(filePath);
+    return;
+  }
   const result = replceSummary(meta, data);
   const contentWithMeta = `---\n${result}---\n${content}`;
 
