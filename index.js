@@ -164,7 +164,13 @@ const runLangLinkApp = async (input) => {
   const data = await res.json();
   const retryPromise = new Promise((resolve, reject) => {
     const getLangLinkResultLoop = async (retryTime = 0) => {
-      const result = await getLangLinkResult(data.id);
+      let result;
+      try {
+        result = await getLangLinkResult(data.id);
+      } catch (e) {
+        reject(e);
+        return;
+      }
       if (!result.length) {
         if (retryTime < RETRY_TIME) {
           setTimeout(() => {
@@ -192,10 +198,11 @@ const getLangLinkResult = async (id) => {
       headers: LANGLINK_HEADERS,
     }
   );
-  const data = await res.json();
   if (res.status !== 200) {
-    throw new Error(JSON.stringify(data));
+    const msg = await res.text();
+    throw new Error(msg);
   }
+  const data = await res.json();
   return data.debug;
 };
 
